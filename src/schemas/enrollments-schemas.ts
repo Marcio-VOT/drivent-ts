@@ -27,6 +27,10 @@ export const createOrUpdateEnrollmentSchema = Joi.object<CreateOrUpdateEnrollmen
   }).required(),
 });
 
+export const cepObjectValidationSchema = Joi.object({
+  cep: Joi.string().length(8).custom(JoiCepValidation).required(),
+});
+
 function joiCpfValidation(value: string, helpers: Joi.CustomHelpers<string>) {
   if (!value) return value;
 
