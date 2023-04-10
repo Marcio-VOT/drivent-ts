@@ -28,8 +28,9 @@ export function handleApplicationErrors(
 
   if (err.name === 'InvalidDataError') {
     if (
-      err.details.includes('"cep" length must be 8 characters long') ||
-      err.details.includes('"cep" contains an invalid value')
+      err.details
+        .map((d) => ['"cep" length must be 8 characters long', '"cep" contains an invalid value'].includes(d))
+        .some((d) => d)
     ) {
       return res.status(httpStatus.NO_CONTENT).send({
         message: err.message,
