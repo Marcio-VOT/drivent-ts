@@ -2,12 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import httpStatus from 'http-status';
 import { ApplicationError } from '@/protocols';
 
-export function handleApplicationErrors(
-  err: ApplicationError | Error,
-  _req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export function handleApplicationErrors(err: ApplicationError, _req: Request, res: Response, next: NextFunction) {
   if (err.name === 'CannotEnrollBeforeStartDateError') {
     return res.status(httpStatus.BAD_REQUEST).send({
       message: err.message,
@@ -26,6 +21,22 @@ export function handleApplicationErrors(
     });
   }
 
+  if (err.name === 'InvalidDataError') {
+    if (
+      err.details.includes('"cep" length must be 8 characters long') ||
+      err.details.includes('"cep" contains an invalid value')
+    ) {
+      return res.status(httpStatus.NO_CONTENT).send({
+        message: err.message,
+        details: err.details,
+      });
+    } else {
+      return res.status(httpStatus.BAD_REQUEST).send({
+        message: err.message,
+        details: err.details,
+      });
+    }
+  }
   if (err.name === 'NotFoundError') {
     return res.status(httpStatus.NOT_FOUND).send({
       message: err.message,

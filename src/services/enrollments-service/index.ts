@@ -6,17 +6,17 @@ import enrollmentRepository, { CreateEnrollmentParams } from '@/repositories/enr
 import { exclude } from '@/utils/prisma-utils';
 
 async function getAddressFromCEP(cep: string) {
-  const { data } = await request.get(`${process.env.VIA_CEP_API}/${cep}/json/`);
+  const result = await request.get(`${process.env.VIA_CEP_API}/${cep}/json/`);
 
-  if (data.erro || !data) {
+  if (result.data.erro || !result.data) {
     throw notFoundError();
   } else {
     const address: AddressData = {
-      logradouro: data.logradouro,
-      complemento: data.complemento,
-      bairro: data.bairro,
-      cidade: data.localidade,
-      uf: data.uf,
+      logradouro: result.data.logradouro,
+      complemento: result.data.complemento,
+      bairro: result.data.bairro,
+      cidade: result.data.localidade,
+      uf: result.data.uf,
     };
     return address;
   }
