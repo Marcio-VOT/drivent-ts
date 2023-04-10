@@ -53,7 +53,7 @@ async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollm
   const address = getAddressForUpsert(params.address);
 
   try {
-    await getAddressFromCEP('83410300');
+    await getAddressFromCEP(params.address.cep);
   } catch {
     throw invalidDataError(['invalid CEP']);
   }
