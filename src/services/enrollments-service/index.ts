@@ -7,9 +7,13 @@ import { exclude } from '@/utils/prisma-utils';
 
 async function getAddressFromCEP(cep: string) {
   const result = await request.get(`${process.env.VIA_CEP_API}/${cep}/json/`);
+  console.log(cep);
+  console.log(result.data);
 
-  if (!result.data) {
+  if (result.data.erro) {
     throw notFoundError();
+  } else {
+    return result.data;
   }
 }
 
