@@ -23,7 +23,8 @@ function validate(schema: ObjectSchema, type: 'body' | 'params' | 'query') {
     if (!error) {
       next();
     } else {
-      throw invalidDataError(error.details.map((d) => d.message));
+      const details: string[] = error.details.map((d) => d.message);
+      throw invalidDataError(details);
     }
   };
 }
