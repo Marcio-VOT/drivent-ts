@@ -11,13 +11,9 @@ async function getTicketPaymentInfo({ ticketId, userId }: { ticketId: string; us
 
   console.log(ticketInfo, userId, UserTiket, allTickets);
 
-  if (!ticketInfo || !allTickets[0]) {
-    throw notFoundError();
-  }
+  if (!ticketInfo || !allTickets[0]) throw notFoundError();
 
-  if (!UserTiket) {
-    throw unauthorizedError();
-  }
+  if (!UserTiket) throw unauthorizedError();
 
   return ticketInfo;
 }
