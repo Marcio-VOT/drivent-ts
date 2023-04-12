@@ -1,7 +1,7 @@
 import { onlyNumbers } from '@brazilian-utils/brazilian-utils';
 import Joi from 'joi';
 
-export const idObjectValidationSchema = Joi.object({
+export const ticketIdObjectValidationSchema = Joi.object({
   ticketId: Joi.string().min(1).custom(joiNumberValidation).required(),
 });
 

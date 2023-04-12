@@ -36,6 +36,11 @@ export function handleApplicationErrors(
         message: err.message,
         details: err.details,
       });
+    } else if (err.details.map((d) => ['"ticketId" contains an invalid value'].includes(d)).some((d) => d)) {
+      return res.status(httpStatus.NOT_FOUND).send({
+        message: err.message,
+        details: err.details,
+      });
     } else {
       return res.status(httpStatus.BAD_REQUEST).send({
         message: err.message,
