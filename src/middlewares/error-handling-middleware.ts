@@ -37,7 +37,7 @@ export function handleApplicationErrors(
         details: err.details,
       });
     } else if (err.details.map((d) => ['"ticketId" contains an invalid value'].includes(d)).some((d) => d)) {
-      return res.status(httpStatus.NOT_FOUND).send({
+      return res.status(httpStatus.UNAUTHORIZED).send({
         message: err.message,
         details: err.details,
       });

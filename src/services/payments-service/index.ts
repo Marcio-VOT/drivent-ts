@@ -3,20 +3,23 @@ import paymentRepository from '@/repositories/payment-repository';
 
 async function getTicketPaymentInfo({ ticketId, userId }: { ticketId: string; userId: number }) {
   const ticketInfo = await paymentRepository.findFirst(ticketId);
+  const {
+    Ticket: [UserTiket],
+  } = await paymentRepository.findTicketOwner({ ticketId, userId });
 
-  if (!ticketInfo[0]) {
+  const allTickets = await paymentRepository.findAll();
+
+  console.log(ticketInfo, userId, UserTiket, allTickets);
+
+  if (!ticketInfo || !allTickets[0]) {
     throw notFoundError();
   }
 
-  const {
-    Enrollment: [UserTicket],
-  } = await paymentRepository.findTicketOwner({ ticketId, userId });
-
-  if (!UserTicket.Ticket[0]) {
+  if (!UserTiket) {
     throw unauthorizedError();
   }
 
-  return ticketInfo[0];
+  return ticketInfo;
 }
 
 const paymentService = {
