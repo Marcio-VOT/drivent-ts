@@ -1,11 +1,13 @@
-import { authenticateToken } from '@/middlewares';
+import { getTicketPaymentInfo, postTicketPayment } from '@/controllers';
+import { authenticateToken, validateQuery } from '@/middlewares';
+import { idObjectValidationSchema } from '@/schemas/payments-schemas';
 import { Router } from 'express';
 
 const paymentsRouter = Router();
 
 paymentsRouter
   .all('/*', authenticateToken)
-  .get('/', (req, res) => res.sendStatus(401))
-  .post('/process', (req, res) => res.sendStatus(401));
+  .get('/', validateQuery(idObjectValidationSchema), getTicketPaymentInfo)
+  .post('/process', postTicketPayment);
 
 export { paymentsRouter };
