@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 import httpStatus from 'http-status';
-import paymentService from '@/services/payments-service';
+import { paymentService } from '@/services/payments-service';
 import { AuthenticatedRequest } from '@/middlewares';
 
 export async function getTicketPaymentInfo(req: AuthenticatedRequest, res: Response, next: NextFunction) {

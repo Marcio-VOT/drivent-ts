@@ -18,8 +18,6 @@ async function getTicketPaymentInfo({ ticketId, userId }: { ticketId: string; us
   return ticketInfo;
 }
 
-const paymentService = {
+export const paymentService = {
   getTicketPaymentInfo,
 };
-
-export default paymentService;
