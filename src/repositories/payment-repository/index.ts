@@ -7,8 +7,12 @@ async function findFirst(ticketId: string) {
     },
   });
 }
-async function findAll() {
-  return await prisma.payment.findMany({});
+async function findTicket(ticketId: string) {
+  return await prisma.ticket.findFirst({
+    where: {
+      id: Number(ticketId),
+    },
+  });
 }
 
 async function findTicketOwner({ ticketId, userId }: { ticketId: string; userId: number }) {
@@ -24,36 +28,12 @@ async function findTicketOwner({ ticketId, userId }: { ticketId: string; userId:
       },
     },
   });
-
-  // prisma.user.findUnique({
-  //   where: {
-  //     id: userId,
-  //   },
-  //   select: {
-  //     Enrollment: {
-  //       where: {
-  //         Ticket: {
-  //           some: {
-  //             id: Number(ticketId),
-  //           },
-  //         },
-  //       },
-  //       select: {
-  //         Ticket: {
-  //           where: {
-  //             id: Number(ticketId),
-  //           },
-  //         },
-  //       },
-  //     },
-  //   },
-  // });
 }
 
 const paymentRepository = {
   findFirst,
   findTicketOwner,
-  findAll,
+  findTicket,
 };
 
 export default paymentRepository;
