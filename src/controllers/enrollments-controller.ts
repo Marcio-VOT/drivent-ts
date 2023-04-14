@@ -29,7 +29,6 @@ export async function postCreateOrUpdateEnrollment(req: AuthenticatedRequest, re
 }
 
 export async function getAddressFromCEP(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  console.log('a');
   const { cep } = req.query as Record<string, string>;
 
   try {
