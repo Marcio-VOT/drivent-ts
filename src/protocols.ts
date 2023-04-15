@@ -3,6 +3,17 @@ export type ApplicationError = {
   message: string;
 };
 
+export type TicketPaymentUserData = {
+  ticketId: number;
+  cardData: {
+    issuer: string;
+    number: number;
+    name: string;
+    expirationDate: Date;
+    cvv: number;
+  };
+};
+
 export type ViaCEPAddress = {
   logradouro: string;
   complemento: string;

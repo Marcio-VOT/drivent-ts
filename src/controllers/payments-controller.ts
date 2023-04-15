@@ -2,6 +2,7 @@ import { NextFunction, Response } from 'express';
 import httpStatus from 'http-status';
 import { paymentService } from '@/services/payments-service';
 import { AuthenticatedRequest } from '@/middlewares';
+import { TicketPaymentUserData } from '@/protocols';
 
 export async function getTicketPaymentInfo(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   const { userId } = req;
@@ -16,9 +17,11 @@ export async function getTicketPaymentInfo(req: AuthenticatedRequest, res: Respo
 
 export async function postTicketPayment(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   const { userId } = req;
+  const paymentData = req.body as TicketPaymentUserData;
 
   try {
-    res.sendStatus(httpStatus.OK);
+    const paymentInfo = await paymentService.postTicketPayment(paymentData, userId);
+    res.status(httpStatus.OK).send(paymentInfo);
   } catch (error) {
     next(error);
   }
