@@ -185,6 +185,29 @@ describe('GET /hotels/:hotelId', () => {
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
   describe('when token is valid', () => {
+    it('shoud respond with status 404 if there is no hotel', async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const enrollment = await createEnrollmentWithAddress(user);
+      const ticketType = await createTicketType();
+      const ticket = await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+      await prisma.ticketType.update({
+        where: { id: ticketType.id },
+        data: { includesHotel: true, isRemote: false },
+      });
+      await prisma.payment.create({
+        data: {
+          ticketId: ticket.id,
+          value: faker.datatype.number(),
+          cardIssuer: 'Visa',
+          cardLastDigits: '1234',
+          updatedAt: new Date(),
+        },
+      });
+      const response = await server.get('/hotels/1').set('Authorization', `Bearer ${token}`);
+      console.log(await prisma.hotel.findMany());
+      expect(response.status).toBe(httpStatus.NOT_FOUND);
+    });
     it('shoud respond with status 402 if ticket is not paid', async () => {
       const hotel = await createHotelAndRooms();
       const user = await createUser();

@@ -35,8 +35,8 @@ async function listHotelRooms(userId: number, hotelId: number) {
   const payment = await paymentRepository.findFirst(String(ticket.id));
 
   if (!ticket.TicketType.includesHotel || ticket.TicketType.isRemote || !payment) throw paymentRequired();
-  const hotel = await hotelsRepository.findHotel(hotelId);
 
+  const hotel = await hotelsRepository.findHotel(hotelId);
   if (!hotel) throw notFoundError();
 
   return await hotelsRepository.listHotelRooms(hotelId);
