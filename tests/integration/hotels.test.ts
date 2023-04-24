@@ -79,6 +79,7 @@ describe('GET /hotels', () => {
         },
       });
       const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
+      console.log(await prisma.hotel.findMany());
       expect(response.status).toBe(httpStatus.NOT_FOUND);
     });
     it('shoud respond with status 404 if ticket does not exist', async () => {
@@ -89,6 +90,7 @@ describe('GET /hotels', () => {
       expect(response.status).toBe(httpStatus.NOT_FOUND);
     });
     it('shoud respond with status 402 if ticket is not paid', async () => {
+      await createHotelAndRooms();
       const user = await createUser();
       const token = await generateValidToken(user);
       const enrollment = await createEnrollmentWithAddress(user);
@@ -98,6 +100,7 @@ describe('GET /hotels', () => {
       expect(response.status).toBe(httpStatus.PAYMENT_REQUIRED);
     });
     it('shoud respond with 402 if ticket type is remote', async () => {
+      await createHotelAndRooms();
       const user = await createUser();
       const token = await generateValidToken(user);
       const enrollment = await createEnrollmentWithAddress(user);
@@ -107,6 +110,7 @@ describe('GET /hotels', () => {
       expect(response.status).toBe(httpStatus.PAYMENT_REQUIRED);
     });
     it('shoud respond with status 402 if ticket type doesnt include hotel', async () => {
+      await createHotelAndRooms();
       const user = await createUser();
       const token = await generateValidToken(user);
       const enrollment = await createEnrollmentWithAddress(user);
@@ -142,8 +146,17 @@ describe('GET /hotels', () => {
 
       const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
       expect(response.status).toBe(httpStatus.OK);
-      expect(Array.isArray(response.body)).toBe(true);
-      expect(response.body.length).toBeGreaterThanOrEqual(1);
+      expect(response.body).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: expect.any(Number),
+            name: expect.any(String),
+            image: expect.any(String),
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String),
+          }),
+        ]),
+      );
     });
   });
 });
@@ -229,8 +242,25 @@ describe('GET /hotels/:hotelId', () => {
 
       const response = await server.get(`/hotels/${hotel.id}`).set('Authorization', `Bearer ${token}`);
       expect(response.status).toBe(httpStatus.OK);
-      expect(Array.isArray(response.body.Rooms)).toBe(true);
-      expect(response.body.Rooms.length).toBeGreaterThanOrEqual(1);
+      expect(response.body).toEqual(
+        expect.objectContaining({
+          id: expect.any(Number),
+          name: expect.any(String),
+          image: expect.any(String),
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+          Rooms: expect.arrayContaining([
+            expect.objectContaining({
+              id: expect.any(Number),
+              name: expect.any(String),
+              capacity: expect.any(Number),
+              hotelId: expect.any(Number),
+              createdAt: expect.any(String),
+              updatedAt: expect.any(String),
+            }),
+          ]),
+        }),
+      );
     });
   });
 });

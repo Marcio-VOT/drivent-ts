@@ -5,6 +5,9 @@ import { paymentRequired } from '@/errors/payment-required-error';
 import paymentRepository from '@/repositories/payment-repository';
 
 async function listHotels(userId: number) {
+  const hotelList = await hotelsRepository.listHotels();
+  if (!hotelList[0]) throw notFoundError();
+
   const userEnrollment = await ticketRepository.findUserEnrrolment(userId);
   if (!userEnrollment) throw notFoundError();
 
@@ -17,21 +20,16 @@ async function listHotels(userId: number) {
 
   if (!ticket.TicketType.includesHotel || ticket.TicketType.isRemote || !payment) throw paymentRequired();
 
-  const hotelList = await hotelsRepository.listHotels();
-  if (!hotelList[0]) throw notFoundError();
-
   return hotelList;
 }
 
 async function listHotelRooms(userId: number, hotelId: number) {
   const userEnrollment = await ticketRepository.findUserEnrrolment(userId);
-  console.log(userEnrollment);
   if (!userEnrollment) throw notFoundError();
 
   const {
     Ticket: [ticket],
   } = await ticketRepository.findUserTickets(userId);
-  console.log('ticket');
   if (!ticket) throw notFoundError();
 
   const payment = await paymentRepository.findFirst(String(ticket.id));
