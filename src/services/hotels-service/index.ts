@@ -24,12 +24,14 @@ async function listHotels(userId: number) {
 }
 
 async function listHotelRooms(userId: number, hotelId: number) {
-  const userEnrollment = await ticketRepository.findUserEnrrolment(1);
+  const userEnrollment = await ticketRepository.findUserEnrrolment(userId);
+  console.log(userEnrollment);
   if (!userEnrollment) throw notFoundError();
 
   const {
     Ticket: [ticket],
   } = await ticketRepository.findUserTickets(userId);
+  console.log('ticket');
   if (!ticket) throw notFoundError();
 
   const payment = await paymentRepository.findFirst(String(ticket.id));
