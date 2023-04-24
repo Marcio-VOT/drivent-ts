@@ -13,9 +13,9 @@ async function listHotels(userId: number) {
   } = await ticketRepository.findUserTickets(userId);
   if (!ticket) throw notFoundError();
 
-  const payment = await paymentRepository.findFirst(String(ticket.id));
+  // const payment = await paymentRepository.findFirst(String(ticket.id));
 
-  if (!ticket.TicketType.includesHotel || ticket.TicketType.isRemote || !payment || ticket.status !== 'PAID')
+  if (!ticket.TicketType.includesHotel || ticket.TicketType.isRemote || ticket.status !== 'PAID')
     throw paymentRequired();
 
   const hotelList = await hotelsRepository.listHotels();
@@ -33,9 +33,9 @@ async function listHotelRooms(userId: number, hotelId: number) {
   } = await ticketRepository.findUserTickets(userId);
   if (!ticket) throw notFoundError();
 
-  const payment = await paymentRepository.findFirst(String(ticket.id));
+  // const payment = await paymentRepository.findFirst(String(ticket.id));
 
-  if (!ticket.TicketType.includesHotel || ticket.TicketType.isRemote || !payment || ticket.status !== 'PAID')
+  if (!ticket.TicketType.includesHotel || ticket.TicketType.isRemote || ticket.status !== 'PAID')
     throw paymentRequired();
 
   const hotel = await hotelsRepository.findHotel(hotelId);
