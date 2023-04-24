@@ -16,7 +16,11 @@ async function listHotels(userId: number) {
   const payment = await paymentRepository.findFirst(String(ticket.id));
 
   if (!ticket.TicketType.includesHotel || ticket.TicketType.isRemote || !payment) throw paymentRequired();
-  return await hotelsRepository.listHotels();
+
+  const hotelList = await hotelsRepository.listHotels();
+  if (!hotelList[0]) throw notFoundError();
+
+  return hotelList;
 }
 
 async function listHotelRooms(userId: number, hotelId: number) {
