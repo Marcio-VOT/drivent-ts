@@ -253,15 +253,7 @@ describe('GET /hotels/:hotelId', () => {
         where: { id: ticketType.id },
         data: { includesHotel: true, isRemote: false },
       });
-      await prisma.payment.create({
-        data: {
-          ticketId: ticket.id,
-          value: faker.datatype.number(),
-          cardIssuer: 'Visa',
-          cardLastDigits: '1234',
-          updatedAt: new Date(),
-        },
-      });
+      await createPayment(ticket.id, faker.datatype.number());
 
       const response = await server.get(`/hotels/${hotel.id}`).set('Authorization', `Bearer ${token}`);
       expect(response.status).toBe(httpStatus.OK);
