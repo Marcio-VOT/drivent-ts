@@ -4,10 +4,10 @@ import { AuthenticatedRequest } from '@/middlewares';
 import { hotesService } from '@/services';
 
 export async function getHotelList(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  const { userId } = req;
   try {
-    const hotels = hotesService.listHotels(userId);
-    res.status(httpStatus.OK).send(hotels);
+    const { userId } = req;
+    const hotels = await hotesService.listHotels(userId);
+    return res.status(httpStatus.OK).send(hotels);
   } catch (error) {
     next(error);
   }
@@ -16,9 +16,10 @@ export async function getHotelList(req: AuthenticatedRequest, res: Response, nex
 export async function getHotelRooms(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   const { userId } = req;
   const { hotelId } = req.params;
+
   try {
-    const rooms = hotesService.listHotelRooms(userId, Number(hotelId));
-    res.status(httpStatus.OK).send(rooms);
+    const rooms = await hotesService.listHotelRooms(userId, Number(hotelId));
+    return res.status(httpStatus.OK).send(rooms);
   } catch (error) {
     next(error);
   }
