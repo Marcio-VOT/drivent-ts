@@ -22,7 +22,7 @@ async function changeBookingRoom(userId: number, roomId: number, bookingId: numb
   await validateUserData(userId, roomId);
 
   const bookingData = await bookingRepository.userBookingData(userId);
-  if (!bookingData) throw notFoundError();
+  if (!bookingData) throw invalidAccessError();
 
   const room = await bookingRepository.findRoom(roomId);
   if (!room) throw notFoundError();
