@@ -29,5 +29,8 @@ export async function createHotelAndRooms() {
         },
       },
     },
+    include: {
+      Rooms: true,
+    },
   });
 }

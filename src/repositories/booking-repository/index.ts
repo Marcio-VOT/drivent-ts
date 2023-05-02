@@ -28,15 +28,6 @@ async function findBookedRoom(roomId: number) {
   });
 }
 
-// async function bookRoom(userId: number, roomId: number) {
-//   return prisma.booking.create({
-//     data: {
-//       userId,
-//       roomId,
-//     },
-//   });
-// }
-
 async function deleteBooking(bookingId: number) {
   prisma.booking.delete({
     where: {

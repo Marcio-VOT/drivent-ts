@@ -11,6 +11,7 @@ import {
   createPayment,
   generateCreditCardData,
   createHotelAndRooms,
+  createBooking,
 } from '../factories';
 import { prisma } from '@/config';
 import app, { init } from '@/app';
@@ -23,9 +24,6 @@ beforeAll(async () => {
 beforeEach(async () => {
   await cleanDb();
 });
-// afterEach(async () => {
-//   await cleanDb();
-// });
 
 const server = supertest(app);
 
@@ -60,7 +58,32 @@ describe('GET /booking', () => {
 
       const response = await server.get('/booking').set('Authorization', `Bearer ${token}`);
 
-      expect(response.statusCode).toBe(404);
+      expect(response.statusCode).toBe(httpStatus.NOT_FOUND);
+    });
+
+    it('should respond with status 200 and booking info', async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const hotel = await createHotelAndRooms();
+      const roomId = hotel.Rooms[0].id;
+      await createBooking(user.id, roomId);
+
+      const response = await server.get('/booking').set('Authorization', `Bearer ${token}`);
+
+      expect(response.statusCode).toBe(httpStatus.OK);
+      expect(response.body).toEqual(
+        expect.objectContaining({
+          id: expect.any(Number),
+          Room: expect.objectContaining({
+            id: expect.any(Number),
+            name: expect.any(String),
+            capacity: expect.any(Number),
+            hotelId: expect.any(Number),
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String),
+          }),
+        }),
+      );
     });
   });
 });
@@ -88,6 +111,8 @@ describe('POST /booking', () => {
 
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
+
+  describe('when token is valid', () => {});
 });
 
 describe('PUT /booking/:bookingId', () => {
@@ -113,4 +138,6 @@ describe('PUT /booking/:bookingId', () => {
 
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
+
+  describe('when token is valid', () => {});
 });
