@@ -18,7 +18,8 @@ export async function registerNewBooking(req: AuthenticatedRequest, res: Respons
   const { roomId } = req.body;
   try {
     const bookingId = await bookingService.registerNewBooking(userId, roomId);
-    return res.status(httpStatus.OK).send(bookingId);
+
+    return res.status(200).send({ bookingId });
   } catch (e) {
     next(e);
   }
@@ -30,7 +31,7 @@ export async function changeBooking(req: AuthenticatedRequest, res: Response, ne
   const { bookingId: bId } = req.params;
   try {
     const bookingId = await bookingService.changeBookingRoom(userId, roomId, Number(bId));
-    return res.status(httpStatus.OK).send(bookingId);
+    return res.status(httpStatus.OK).send({ bookingId });
   } catch (e) {
     next(e);
   }
