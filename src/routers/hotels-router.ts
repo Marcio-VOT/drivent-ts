@@ -3,11 +3,11 @@ import { authenticateToken, validateParams } from '@/middlewares';
 import { hotelIdObjectValidationSchema } from '@/schemas/hotels-schemas';
 import { getHotelList, getHotelRooms } from '@/controllers/hotels-controller';
 
-const hotelsRoutes = Router();
+const hotelsRouter = Router();
 
-hotelsRoutes
+hotelsRouter
   .all('/*', authenticateToken)
   .get('/', getHotelList)
   .get('/:hotelId', validateParams(hotelIdObjectValidationSchema), getHotelRooms);
 
-export { hotelsRoutes };
+export { hotelsRouter };
