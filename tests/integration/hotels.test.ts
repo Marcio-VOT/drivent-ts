@@ -79,7 +79,6 @@ describe('GET /hotels', () => {
         },
       });
       const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
-      console.log(await prisma.hotel.findMany());
       expect(response.status).toBe(httpStatus.NOT_FOUND);
     });
     it('shoud respond with status 404 if ticket does not exist', async () => {
@@ -205,7 +204,6 @@ describe('GET /hotels/:hotelId', () => {
         },
       });
       const response = await server.get('/hotels/1').set('Authorization', `Bearer ${token}`);
-      console.log(await prisma.hotel.findMany());
       expect(response.status).toBe(httpStatus.NOT_FOUND);
     });
     it('shoud respond with status 402 if ticket is not paid', async () => {
