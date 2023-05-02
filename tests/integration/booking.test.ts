@@ -112,7 +112,14 @@ describe('POST /booking', () => {
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
-  describe('when token is valid', () => {});
+  describe('when token is valid', () => {
+    it('should respond with status 403 if ticket is remote', async () => {});
+    it('should respond with status 403 if ticket doesnt include hotel', async () => {});
+    it('should respond with status 403 if ticket is not payed', async () => {});
+    it('should respond with status 403 if room is full', async () => {});
+    it('should respond with status 404 if room doesnt exist', async () => {});
+    it('should respond with status 200 if everything is ok', async () => {});
+  });
 });
 
 describe('PUT /booking/:bookingId', () => {
@@ -139,5 +146,13 @@ describe('PUT /booking/:bookingId', () => {
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
-  describe('when token is valid', () => {});
+  describe('when token is valid', () => {
+    it('should respond with status 403 if doesnt have a booking', async () => {});
+    it('should respond with status 403 if new room is full', async () => {});
+    it('should respond with status 404 if room doesnt exist', async () => {});
+    it('should respond with status 403 if ticket is remote', async () => {});
+    it('should respond with status 403 if ticket doesnt include hotel', async () => {});
+    it('should respond with status 403 if ticket is not payed', async () => {});
+    it('should respond with status 200 if everything is ok', async () => {});
+  });
 });
