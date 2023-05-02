@@ -45,6 +45,7 @@ async function upsertBooking(userId: number, roomId: number, bookingId?: number)
     },
     update: {
       roomId,
+      updatedAt: new Date(),
     },
   });
 }
