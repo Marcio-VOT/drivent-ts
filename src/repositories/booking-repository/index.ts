@@ -28,14 +28,6 @@ async function findBookedRoom(roomId: number) {
   });
 }
 
-async function deleteBooking(bookingId: number) {
-  prisma.booking.delete({
-    where: {
-      id: bookingId,
-    },
-  });
-}
-
 async function upsertBooking(userId: number, roomId: number, bookingId?: number) {
   return prisma.booking.upsert({
     where: { id: bookingId ? bookingId : -1 },
@@ -53,7 +45,6 @@ async function upsertBooking(userId: number, roomId: number, bookingId?: number)
 const bookingRepository = {
   userBookingData,
   findRoom,
-  deleteBooking,
   upsertBooking,
   findBookedRoom,
 };

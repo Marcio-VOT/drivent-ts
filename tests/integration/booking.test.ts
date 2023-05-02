@@ -292,12 +292,184 @@ describe('PUT /booking/:bookingId', () => {
   });
 
   describe('when token is valid', () => {
-    it('should respond with status 403 if doesnt have a booking', async () => {});
-    it('should respond with status 403 if new room is full', async () => {});
-    it('should respond with status 404 if room doesnt exist', async () => {});
-    it('should respond with status 403 if ticket is remote', async () => {});
-    it('should respond with status 403 if ticket doesnt include hotel', async () => {});
-    it('should respond with status 403 if ticket is not payed', async () => {});
-    it('should respond with status 200 if everything is ok', async () => {});
+    it('should respond with status 403 if doesnt have a booking', async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const hotel = await createHotelAndRooms();
+      const roomId = hotel.Rooms[0].id;
+      const body = { roomId };
+      const ticketType = await createTicketType();
+      const enrollment = await createEnrollmentWithAddress(user);
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+      await prisma.ticketType.update({
+        where: {
+          id: ticketType.id,
+        },
+        data: {
+          isRemote: false,
+          includesHotel: true,
+        },
+      });
+
+      const response = await server.put('/booking/0').set('Authorization', `Bearer ${token}`).send(body);
+
+      expect(response.status).toBe(httpStatus.FORBIDDEN);
+    });
+    it('should respond with status 403 if new room is full', async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const hotel = await createHotelAndRooms();
+      const roomId = hotel.Rooms[0].id;
+      const roomId2 = hotel.Rooms[1].id;
+      const body = { roomId: roomId2 };
+      const ticketType = await createTicketType();
+      const enrollment = await createEnrollmentWithAddress(user);
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+      await prisma.ticketType.update({
+        where: {
+          id: ticketType.id,
+        },
+        data: {
+          isRemote: false,
+          includesHotel: true,
+        },
+      });
+      await createBooking(user.id, roomId);
+      await createBooking((await createUser()).id, roomId2);
+
+      const response = await server.put('/booking/0').set('Authorization', `Bearer ${token}`).send(body);
+
+      expect(response.status).toBe(httpStatus.FORBIDDEN);
+    });
+    it('should respond with status 404 if room doesnt exist', async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const hotel = await createHotelAndRooms();
+      const roomId = hotel.Rooms[0].id;
+      // const roomId2 = hotel.Rooms[1].id;
+      const body = { roomId: -1 };
+      const ticketType = await createTicketType();
+      const enrollment = await createEnrollmentWithAddress(user);
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+      await prisma.ticketType.update({
+        where: {
+          id: ticketType.id,
+        },
+        data: {
+          isRemote: false,
+          includesHotel: true,
+        },
+      });
+      await createBooking(user.id, roomId);
+
+      const response = await server.put('/booking/0').set('Authorization', `Bearer ${token}`).send(body);
+
+      expect(response.status).toBe(httpStatus.NOT_FOUND);
+    });
+    it('should respond with status 403 if ticket is remote', async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const hotel = await createHotelAndRooms();
+      const roomId = hotel.Rooms[0].id;
+      const roomId2 = hotel.Rooms[1].id;
+      const body = { roomId: roomId2 };
+      const ticketType = await createTicketType();
+      const enrollment = await createEnrollmentWithAddress(user);
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+      await prisma.ticketType.update({
+        where: {
+          id: ticketType.id,
+        },
+        data: {
+          isRemote: true,
+          includesHotel: true,
+        },
+      });
+      await createBooking(user.id, roomId);
+
+      const response = await server.put('/booking/0').set('Authorization', `Bearer ${token}`).send(body);
+
+      expect(response.status).toBe(httpStatus.FORBIDDEN);
+    });
+    it('should respond with status 403 if ticket doesnt include hotel', async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const hotel = await createHotelAndRooms();
+      const roomId = hotel.Rooms[0].id;
+      const roomId2 = hotel.Rooms[1].id;
+      const body = { roomId: roomId2 };
+      const ticketType = await createTicketType();
+      const enrollment = await createEnrollmentWithAddress(user);
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+      await prisma.ticketType.update({
+        where: {
+          id: ticketType.id,
+        },
+        data: {
+          isRemote: false,
+          includesHotel: false,
+        },
+      });
+      await createBooking(user.id, roomId);
+
+      const response = await server.put('/booking/0').set('Authorization', `Bearer ${token}`).send(body);
+
+      expect(response.status).toBe(httpStatus.FORBIDDEN);
+    });
+    it('should respond with status 403 if ticket is not payed', async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const hotel = await createHotelAndRooms();
+      const roomId = hotel.Rooms[0].id;
+      const roomId2 = hotel.Rooms[1].id;
+      const body = { roomId: roomId2 };
+      const ticketType = await createTicketType();
+      const enrollment = await createEnrollmentWithAddress(user);
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.RESERVED);
+      await prisma.ticketType.update({
+        where: {
+          id: ticketType.id,
+        },
+        data: {
+          isRemote: false,
+          includesHotel: true,
+        },
+      });
+      await createBooking(user.id, roomId);
+
+      const response = await server.put('/booking/0').set('Authorization', `Bearer ${token}`).send(body);
+
+      expect(response.status).toBe(httpStatus.FORBIDDEN);
+    });
+    it('should respond with status 200 if everything is ok', async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const hotel = await createHotelAndRooms();
+      const roomId = hotel.Rooms[0].id;
+      const roomId2 = hotel.Rooms[1].id;
+      const body = { roomId: roomId2 };
+      const ticketType = await createTicketType();
+      const enrollment = await createEnrollmentWithAddress(user);
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+      await prisma.ticketType.update({
+        where: {
+          id: ticketType.id,
+        },
+        data: {
+          isRemote: false,
+          includesHotel: true,
+        },
+      });
+      await createBooking(user.id, roomId);
+
+      const response = await server.put('/booking/0').set('Authorization', `Bearer ${token}`).send(body);
+
+      expect(response.status).toBe(httpStatus.OK);
+      expect(response.body).toEqual(
+        expect.objectContaining({
+          bookingId: expect.any(Number),
+        }),
+      );
+    });
   });
 });
