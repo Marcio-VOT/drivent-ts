@@ -1,12 +1,12 @@
 import { NextFunction, Response } from 'express';
 import httpStatus from 'http-status';
 import { AuthenticatedRequest } from '@/middlewares';
-import { hotesService } from '@/services';
+import { hotelsService } from '@/services';
 
 export async function getHotelList(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
     const { userId } = req;
-    const hotels = await hotesService.listHotels(userId);
+    const hotels = await hotelsService.listHotels(userId);
     return res.status(httpStatus.OK).send(hotels);
   } catch (error) {
     next(error);
@@ -18,7 +18,7 @@ export async function getHotelRooms(req: AuthenticatedRequest, res: Response, ne
   const { hotelId } = req.params;
 
   try {
-    const rooms = await hotesService.listHotelRooms(userId, Number(hotelId));
+    const rooms = await hotelsService.listHotelRooms(userId, Number(hotelId));
     return res.status(httpStatus.OK).send(rooms);
   } catch (error) {
     next(error);
