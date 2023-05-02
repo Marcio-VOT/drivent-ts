@@ -38,7 +38,7 @@ async function deleteBooking(bookingId: number) {
 
 async function upsertBooking(userId: number, roomId: number, bookingId?: number) {
   return prisma.booking.upsert({
-    where: { id: bookingId },
+    where: { id: bookingId ? bookingId : -1 },
     create: {
       userId,
       roomId,
