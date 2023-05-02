@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1683017246290" clover="3.2.0">
-  <project timestamp="1683017246290" name="All files">
-    <metrics statements="601" coveredstatements="562" conditionals="84" coveredconditionals="59" methods="112" coveredmethods="99" elements="797" coveredelements="720" complexity="0" loc="601" ncloc="601" packages="27" files="68" classes="68"/>
+<coverage generated="1683017386290" clover="3.2.0">
+  <project timestamp="1683017386290" name="All files">
+    <metrics statements="600" coveredstatements="562" conditionals="84" coveredconditionals="59" methods="111" coveredmethods="99" elements="795" coveredelements="720" complexity="0" loc="600" ncloc="600" packages="27" files="68" classes="68"/>
     <package name="src">
       <metrics statements="22" coveredstatements="16" conditionals="2" coveredconditionals="0" methods="5" coveredmethods="2"/>
       <file name="app.ts" path="/home/votleita/Projects/drivent1-ref-initial/src/app.ts">
@@ -367,17 +367,16 @@
       </file>
     </package>
     <package name="src.repositories.booking-repository">
-      <metrics statements="8" coveredstatements="7" conditionals="2" coveredconditionals="1" methods="5" coveredmethods="4"/>
+      <metrics statements="7" coveredstatements="7" conditionals="2" coveredconditionals="1" methods="4" coveredmethods="4"/>
       <file name="index.ts" path="/home/votleita/Projects/drivent1-ref-initial/src/repositories/booking-repository/index.ts">
-        <metrics statements="8" coveredstatements="7" conditionals="2" coveredconditionals="1" methods="5" coveredmethods="4"/>
+        <metrics statements="7" coveredstatements="7" conditionals="2" coveredconditionals="1" methods="4" coveredmethods="4"/>
         <line num="1" count="11" type="stmt"/>
         <line num="4" count="4" type="stmt"/>
         <line num="16" count="13" type="stmt"/>
         <line num="24" count="5" type="stmt"/>
-        <line num="32" count="0" type="stmt"/>
-        <line num="40" count="2" type="stmt"/>
-        <line num="53" count="11" type="stmt"/>
-        <line num="61" count="11" type="stmt"/>
+        <line num="32" count="2" type="stmt"/>
+        <line num="45" count="11" type="stmt"/>
+        <line num="52" count="11" type="stmt"/>
       </file>
     </package>
     <package name="src.repositories.enrollment-repository">
