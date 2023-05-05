@@ -25,14 +25,6 @@ async function changeBookingRoom(userId: number, roomId: number, bookingId: numb
   return booking.id;
 }
 
-const bookingService = {
-  userBookingData,
-  registerNewBooking,
-  changeBookingRoom,
-};
-
-export default bookingService;
-
 async function validateUserData(userId: number, roomId: number) {
   const room = await bookingRepository.findRoom(roomId);
   if (!room) throw notFoundError();
@@ -51,3 +43,12 @@ async function validateUserData(userId: number, roomId: number) {
 
   return room;
 }
+
+const bookingService = {
+  userBookingData,
+  registerNewBooking,
+  changeBookingRoom,
+  validateUserData,
+};
+
+export default bookingService;

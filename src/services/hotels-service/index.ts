@@ -24,6 +24,7 @@ async function listHotelRooms(userId: number, hotelId: number) {
 export const hotelsService = {
   listHotels,
   listHotelRooms,
+  validateUserData,
 };
 
 async function validateUserData(userId: number) {
