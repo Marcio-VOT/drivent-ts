@@ -22,6 +22,7 @@ async function changeBookingRoom(userId: number, roomId: number, bookingId: numb
   if (!bookingData) throw invalidAccessError();
 
   const booking = await bookingRepository.upsertBooking(userId, room.id, bookingId);
+  console.log(booking.id);
   return booking.id;
 }
 
@@ -41,7 +42,7 @@ async function validateUserData(userId: number, roomId: number) {
   const bookedRoom = await bookingRepository.findBookedRoom(roomId);
   if (bookedRoom) throw invalidAccessError();
 
-  return room;
+  return { id: room.id };
 }
 
 const bookingService = {
