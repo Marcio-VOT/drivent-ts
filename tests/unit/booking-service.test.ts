@@ -3,14 +3,6 @@ import faker from '@faker-js/faker';
 import bookingRepository from '@/repositories/booking-repository';
 import ticketRepository from '@/repositories/ticket-repository';
 
-// jest.mock('@/services/booking-service', () => {
-//   const org = jest.requireActual('@/services/booking-service');
-//   org.default.validateUserData = jest.fn().mockImplementation((): any => ({
-//     id: 999,
-//   }));
-//   return { ...org.default };
-// });
-
 describe('service booking test', () => {
   describe('userBookingData test', () => {
     it('should return 404 error if user booking data not found', async () => {
@@ -60,7 +52,115 @@ describe('service booking test', () => {
       expect(response).toEqual(fakerNumber);
     });
   });
-  describe('validateUserData test', () => {});
+  describe('validateUserData test', () => {
+    it('should respond with notFoundError when the room dont exist', () => {
+      jest.spyOn(bookingRepository, 'findRoom').mockImplementationOnce((): any => false);
+
+      const response = bookingService.validateUserData(faker.datatype.number(), faker.datatype.number());
+
+      expect(response).rejects.toEqual({
+        name: 'NotFoundError',
+        message: 'No result for this search!',
+      });
+    });
+    it('should respond with notFoundError when the user has no enrollment', () => {
+      jest.spyOn(bookingRepository, 'findRoom').mockImplementationOnce((): any => ({ id: faker.datatype.number() }));
+      jest.spyOn(ticketRepository, 'findUserEnrrolment').mockImplementationOnce((): any => false);
+
+      const response = bookingService.validateUserData(faker.datatype.number(), faker.datatype.number());
+
+      expect(response).rejects.toEqual({
+        name: 'NotFoundError',
+        message: 'No result for this search!',
+      });
+    });
+    it('should respond with invalidAccessError when ticket does not exist', () => {
+      jest.spyOn(bookingRepository, 'findRoom').mockImplementationOnce((): any => ({ id: faker.datatype.number() }));
+      jest.spyOn(ticketRepository, 'findUserEnrrolment').mockImplementationOnce((): any => true);
+      jest.spyOn(ticketRepository, 'findUserTickets').mockImplementationOnce((): any => ({
+        Ticket: [null],
+      }));
+
+      const response = bookingService.validateUserData(faker.datatype.number(), faker.datatype.number());
+
+      expect(response).rejects.toEqual({
+        name: 'InvalidAccessError',
+        message: `You can't complete this action`,
+      });
+    });
+    it('should respond with invalidAccessError when ticket type does not iclude hotel', () => {
+      jest.spyOn(bookingRepository, 'findRoom').mockImplementationOnce((): any => ({ id: faker.datatype.number() }));
+      jest.spyOn(ticketRepository, 'findUserEnrrolment').mockImplementationOnce((): any => true);
+      jest.spyOn(ticketRepository, 'findUserTickets').mockImplementationOnce((): any => ({
+        Ticket: [{ TicketType: { includesHotel: false, isRemote: false }, status: 'PAID' }],
+      }));
+
+      const response = bookingService.validateUserData(faker.datatype.number(), faker.datatype.number());
+
+      expect(response).rejects.toEqual({
+        name: 'InvalidAccessError',
+        message: `You can't complete this action`,
+      });
+    });
+    it('should respond with invalidAccessError when the ticket type is remote', () => {
+      jest.spyOn(bookingRepository, 'findRoom').mockImplementationOnce((): any => ({ id: faker.datatype.number() }));
+      jest.spyOn(ticketRepository, 'findUserEnrrolment').mockImplementationOnce((): any => true);
+      jest.spyOn(ticketRepository, 'findUserTickets').mockImplementationOnce((): any => ({
+        Ticket: [{ TicketType: { includesHotel: true, isRemote: true }, status: 'PAID' }],
+      }));
+
+      const response = bookingService.validateUserData(faker.datatype.number(), faker.datatype.number());
+
+      expect(response).rejects.toEqual({
+        name: 'InvalidAccessError',
+        message: `You can't complete this action`,
+      });
+    });
+    it('should respond with invalidAccessError when the ticket status is not PAID', () => {
+      jest.spyOn(bookingRepository, 'findRoom').mockImplementationOnce((): any => ({ id: faker.datatype.number() }));
+      jest.spyOn(ticketRepository, 'findUserEnrrolment').mockImplementationOnce((): any => true);
+      jest.spyOn(ticketRepository, 'findUserTickets').mockImplementationOnce((): any => ({
+        Ticket: [{ TicketType: { includesHotel: true, isRemote: false }, status: 'xxxx' }],
+      }));
+
+      const response = bookingService.validateUserData(faker.datatype.number(), faker.datatype.number());
+
+      expect(response).rejects.toEqual({
+        name: 'InvalidAccessError',
+        message: `You can't complete this action`,
+      });
+    });
+    it('should respond with invalidAccessError when the room is already booked', () => {
+      jest.spyOn(bookingRepository, 'findRoom').mockImplementationOnce((): any => ({ id: faker.datatype.number() }));
+      jest.spyOn(ticketRepository, 'findUserEnrrolment').mockImplementationOnce((): any => true);
+      jest.spyOn(ticketRepository, 'findUserTickets').mockImplementationOnce((): any => ({
+        Ticket: [{ TicketType: { includesHotel: true, isRemote: false }, status: 'PAID' }],
+      }));
+      jest.spyOn(bookingRepository, 'findBookedRoom').mockImplementationOnce((): any => true);
+
+      const response = bookingService.validateUserData(faker.datatype.number(), faker.datatype.number());
+
+      expect(response).rejects.toEqual({
+        name: 'InvalidAccessError',
+        message: `You can't complete this action`,
+      });
+    });
+    it('should respond with the room id when all the data is correct', async () => {
+      const fakerNumber = faker.datatype.number();
+      jest.spyOn(bookingRepository, 'findRoom').mockImplementationOnce((): any => ({ id: fakerNumber }));
+      jest.spyOn(ticketRepository, 'findUserEnrrolment').mockImplementationOnce((): any => true);
+      jest.spyOn(ticketRepository, 'findUserTickets').mockImplementationOnce((): any => ({
+        Ticket: [{ TicketType: { includesHotel: true, isRemote: false }, status: 'PAID' }],
+      }));
+      jest.spyOn(bookingRepository, 'findBookedRoom').mockImplementationOnce((): any => false);
+
+      const response = await bookingService.validateUserData(faker.datatype.number(), faker.datatype.number());
+
+      expect(response).toEqual({
+        id: fakerNumber,
+      });
+    });
+  });
 });
 
 function mockValidateUserData(id: number) {
